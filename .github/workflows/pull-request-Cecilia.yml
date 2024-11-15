@@ -1,44 +1,50 @@
-name: Quality Gate for Pull Request
-
+name: Pull Request Check
 on:
   pull_request:
-    branches:
-      - master  # Define en qué rama se activa el PR, aquí usamos "master"
 
 jobs:
-  quality-gate:
+  check_pull_request:
     runs-on: ubuntu-latest
-
     steps:
+      # Checkout del código
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # 1. Analizar el código (simulación con echo)
-      - name: Analizar el código
+      # Paso 1: Analizar el código
+      - name: Realizar análisis de SAST
         run: echo "Realizando análisis de SAST"
 
-      # 2. Comprobar si se cumplen los requisitos (buscar archivo allow_pull_request.txt)
-      - name: Comprobar requisitos
-        id: check_allow_file
+      # Verificar archivos
+      - name: Verificar archivos en el directorio
+        run: ls -la
+        working-directory: ${{ github.workspace }}
+
+      # Paso 2: Comprobar se cumplen los requisitos
+      - name: Comprobar si se permite el Pull Request
+        id: check_allow_pull
         run: |
-          if [ -f allow_pull_request.txt ]; then
+          if [ -f ${{ github.workspace }}/allow_pull_request.txt ]; then
             echo "allow_pull=true" >> $GITHUB_ENV
+            echo "Archivo allow_pull_request.txt encontrado"
           else
             echo "allow_pull=false" >> $GITHUB_ENV
+            echo "Archivo allow_pull_request.txt NO encontrado"
           fi
+        working-directory: ${{ github.workspace }}
 
-      # 3. Permitir la build si allow_pull es true
+      # Paso 3: Permitir la build si allow_pull es True
       - name: Permitir Pull Request
         if: env.allow_pull == 'true'
         run: echo "Permitiendo Pull Request"
 
-      # 4. Impedir la build si allow_pull es false
+      # Paso 4: Impedir la build si allow_pull es False
       - name: Impedir Pull Request
         if: env.allow_pull == 'false'
         run: |
           echo "Build fallida. Impidiendo Pull Request"
           exit 1
-          
+
+      # Guardar artefactos
       - name: Guardar artefactos
         if: always()
         uses: actions/upload-artifact@v3
