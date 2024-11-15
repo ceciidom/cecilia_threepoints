@@ -1,4 +1,4 @@
-name: Pull Request QG
+name: Pull Request Check
 on:
   pull_request:
 
@@ -6,20 +6,20 @@ jobs:
   check_pull_request:
     runs-on: ubuntu-latest
     steps:
-      # Paso 1: Checkout del código
+      # Checkout del código
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Paso 2: Análisis de SAST (simulado)
+      # Paso 1: Analizar el código
       - name: Realizar análisis de SAST
         run: echo "Realizando análisis de SAST"
 
-      # Paso extra: Verificar archivos en el directorio
+      # Verificar archivos
       - name: Verificar archivos en el directorio
         run: ls -la
         working-directory: ${{ github.workspace }}
 
-      # Paso 3: Comprobar si se permite el Pull Request
+      # Paso 2: Comprobar se cumplen los requisitos
       - name: Comprobar si se permite el Pull Request
         id: check_allow_pull
         run: |
@@ -32,19 +32,19 @@ jobs:
           fi
         working-directory: ${{ github.workspace }}
 
-      # Paso 4: Permitir la build si allow_pull es True
+      # Paso 3: Permitir la build si allow_pull es True
       - name: Permitir Pull Request
         if: env.allow_pull == 'true'
         run: echo "Permitiendo Pull Request"
 
-      # Paso 5: Impedir la build si allow_pull es False
+      # Paso 4: Impedir la build si allow_pull es False
       - name: Impedir Pull Request
         if: env.allow_pull == 'false'
         run: |
           echo "Build fallida. Impidiendo Pull Request"
           exit 1
 
-      # Paso 6: Guardar artefactos
+      # Guardar artefactos
       - name: Guardar artefactos
         if: always()
         uses: actions/upload-artifact@v3
