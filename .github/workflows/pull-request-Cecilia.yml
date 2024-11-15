@@ -1,0 +1,49 @@
+name: Quality Gate for Pull Request
+
+on:
+  pull_request:
+    branches:
+      - master 
+      - feature-prueba 
+      - main 
+
+jobs:
+  quality-gate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # 1. Analizar el código (simulación con echo)
+      - name: Analizar el código
+        run: echo "Realizando análisis de SAST"
+
+      # 2. Comprobar si se cumplen los requisitos (buscar archivo allow_pull_request.txt)
+      - name: Comprobar requisitos
+        id: check_allow_file
+        run: |
+          if [ -f allow_pull_request.txt ]; then
+            echo "allow_pull=true" >> $GITHUB_ENV
+          else
+            echo "allow_pull=false" >> $GITHUB_ENV
+          fi
+
+      # 3. Permitir la build si allow_pull es true
+      - name: Permitir Pull Request
+        if: env.allow_pull == 'true'
+        run: echo "Permitiendo Pull Request"
+
+      # 4. Impedir la build si allow_pull es false
+      - name: Impedir Pull Request
+        if: env.allow_pull == 'false'
+        run: |
+          echo "Build fallida. Impidiendo Pull Request"
+          exit 1
+
+      - name: Guardar artefactos
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: pull-request-check
+          path: allow_pull_request.txt
