@@ -1,6 +1,5 @@
 name: CI/CD Pipeline
 
-# Ejecutar el workflow al hacer push en la rama master
 on:
   push:
     branches:
@@ -11,18 +10,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Ejecución de pruebas de calidad de código (Pruebas de SAST)
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Show current directory
+        run: pwd
+
+      - name: List files in current directory
+        run: ls -la
+
       - name: Pruebas de SAST
         run: echo "Ejecución de pruebas de SAST"
 
-      # 2. Crear un archivo de credenciales
       - name: Crear archivo de credenciales
         run: |
           echo "[credentials]" > credentials.ini
           echo "user=${{ secrets.USERNAME }}" >> credentials.ini
           echo "password=${{ secrets.PASSWORD }}" >> credentials.ini
 
-      # 3. Construcción del container de Docker
       - name: Build docker image
-        run: docker build -t devops_ws . --tag devops_ws:$(date +%s)
-
+        run: docker build -t devops_ws:$(date +%s) .
