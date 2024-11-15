@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+      - 'feature/*'   # Todas las ramas que empiecen por "feature/"
+      - 'hotfix/*'    # Todas las ramas que empiecen por "hotfix/"
 
 jobs:
   build:
