@@ -26,9 +26,3 @@ jobs:
 
       - name: Build docker image
         run: docker build -t devops_ws:$(date +%s) .
-
-      - name: Guardar credentials.ini como artefacto
-        uses: actions/upload-artifact@v3
-        with:
-          name: credentials-file
-          path: credentials.ini
