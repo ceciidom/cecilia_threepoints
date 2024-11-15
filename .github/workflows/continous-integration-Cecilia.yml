@@ -24,4 +24,5 @@ jobs:
 
       # 3. Construcción del container de Docker
       - name: Build docker image
-        run: docker build -t devops_ws . --tag devops_ws_:$(date +%s)
+        run: docker build -t devops_ws:$(date +%s) .
+
