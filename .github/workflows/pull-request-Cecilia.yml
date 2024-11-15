@@ -3,7 +3,8 @@ name: Quality Gate for Pull Request
 on:
   pull_request:
     branches:
-      - master  # Define en qué rama se activa el PR, aquí usamos "master"
+      - master 
+      - feature-prueba # Define en qué rama se activa el PR, aquí usamos "master"
 
 jobs:
   quality-gate:
@@ -38,7 +39,7 @@ jobs:
         run: |
           echo "Build fallida. Impidiendo Pull Request"
           exit 1
-          
+
       - name: Guardar artefactos
         if: always()
         uses: actions/upload-artifact@v3
