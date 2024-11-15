@@ -4,7 +4,8 @@ on:
   pull_request:
     branches:
       - master 
-      - feature-prueba # Define en qué rama se activa el PR, aquí usamos "master"
+      - feature-prueba 
+      - main 
 
 jobs:
   quality-gate:
